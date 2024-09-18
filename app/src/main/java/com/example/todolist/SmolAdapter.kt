@@ -44,8 +44,13 @@ class SmolAdapter(
 
     override fun onBindViewHolder(holder: SmolViewHolder, position: Int) {
         holder.textView.text = getItem(position).desc
+
+        holder.doneChk.setOnCheckedChangeListener(null)
         holder.doneChk.isChecked = getItem(position).done
 
+        holder.doneChk.setOnCheckedChangeListener { _, isChecked ->
+            setCheck(position)
+        }
         holder.editText.setText(getItem(position).desc)
         if (getItem(position).isEdited) {
             holder.editText.isVisible = true
@@ -86,7 +91,7 @@ class SmolViewHolder(
 
         }
 
-        doneChk.setOnCheckedChangeListener { buttonView, isChecked ->  setCheck(bindingAdapterPosition)}
+        doneChk.setOnCheckedChangeListener { buttonView, isChecked -> setCheck(bindingAdapterPosition)}
 
     }
 }

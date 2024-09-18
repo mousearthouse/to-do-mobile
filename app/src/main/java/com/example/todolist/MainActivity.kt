@@ -1,17 +1,25 @@
 package com.example.todolist
 
+import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.todolist.databinding.ActivityMainBinding
 import java.util.UUID
+import com.google.gson.Gson
+import com.google.gson.annotations.Expose
+import com.google.gson.reflect.TypeToken
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 data class Task(
     val desc: String,
     val done: Boolean,
     val id: UUID,
-    val isEdited: Boolean
+    @Expose(serialize = false) val isEdited: Boolean
 ) {
 }
 
@@ -38,6 +46,16 @@ class MainActivity : ComponentActivity() {
             } else {
                 Toast.makeText(this, "Write something", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.loadBtn.setOnClickListener {
+            tasksList.clear()
+            tasksList.addAll(loadTasksFromFile(this, "tasks.json"))
+            adapter.submitList(tasksList.toList())
+        }
+
+        binding.saveBtn.setOnClickListener {
+            saveTasksToFile(this, tasksList, "tasks.json")
         }
     }
 
@@ -73,5 +91,33 @@ class MainActivity : ComponentActivity() {
             tasksList[position] = isEditedCheck
             adapter.submitList(tasksList.toList())
         }
+    }
+
+    fun saveTasksToFile(context: Context, tasks: List<Task>, fileName: String) {
+        val gson = Gson()
+        val jsonString = gson.toJson(tasks)
+        Log.d(",kznm", jsonString)
+
+        val file = File(context.filesDir, fileName)
+        FileOutputStream(file).use { outputStream ->
+            outputStream.write(jsonString.toByteArray())
+        }
+    }
+
+    fun loadTasksFromFile(context: Context, fileName: String): List<Task> {
+        val file = File(context.filesDir, fileName)
+
+        if (!file.exists()) {
+            return emptyList()
+        }
+
+        val jsonString = FileInputStream(file).use { inputStream ->
+            inputStream.bufferedReader().use { it.readText() }
+        }
+        Log.d(",kznm", jsonString)
+
+        val gson = Gson()
+        val taskListType = object : TypeToken<List<Task>>() {}.type
+        return gson.fromJson(jsonString, taskListType)
     }
 }
