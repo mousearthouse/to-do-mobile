@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/yourTasksText"
+        android:layout_width="match_parent"
+        android:layout_height="70sp"
+        android:text="Your tasks:" />
+
+    <Button
+        android:id="@+id/addTask"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="+"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tasksRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:itemCount="5"
+        tools:listitem="@layout/task_view" />
+
+</LinearLayout>
